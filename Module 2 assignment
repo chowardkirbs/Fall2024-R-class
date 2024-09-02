@@ -1,0 +1,31 @@
+# Assignment 2
+
+
+#from assignment
+
+assignment2 <- c(16, 18, 14, 22, 27, 17, 19, 17, 17, 22, 20, 22)
+
+
+
+#The following did not work because the variables are different.
+myMean <- function(assignment2) { 
+return(sum(assignment)/length(someData))
+}
+
+
+
+#The following now has variable names that are consistent. 
+myMean <- function(assignment2) { 
+return(sum(assignment2)/length(assignment2))
+}
+
+
+
+myMean(assignment2)
+
+
+
+#the data does not have to be named assignment2. Below is where the data is named check
+#and the function works as it should
+check<-c(2,4,6,8,10,15)
+myMean(check)
