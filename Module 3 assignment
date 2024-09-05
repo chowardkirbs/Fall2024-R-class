@@ -1,0 +1,43 @@
+#Module 3 assignment 3
+#05 September
+
+
+#There needs to be a comma between each data entry. 
+#For example, there is not a comma between Marco and Carly, and 62 and 51.
+#Variable names cannot have spaces
+
+#Name <- c("Jeb", “Donald”, "Ted”, “Marco” “Carly”, “Hillary”, “Berine”)
+
+#ABC political poll results <- c(4, 62 51, 21, 2, 14, 15)
+
+#CBS political poll results <- c(12, 75, 43, 19, 1, 21, 19) 
+
+
+#What is could be...
+#I changed "Name" to "Candidate_Name" so that 
+#the variable name would be more descriptive
+
+
+ABC_poll<-c(4, 62, 51, 21, 2, 14, 15)
+CBS_poll<-c(12, 75, 43, 19, 1, 21, 19)
+Candidate_Name<-c("Jeb","Donald","Ted","Marco","Carly","Hillary","Bernie")
+
+#rbind joins the three data sets by row to create a data.frame
+dfPractice<-data.frame(rbind(Candidate_Name,ABC_poll,CBS_poll))
+
+
+#cbind joins the three data sets by column name to make data.frame
+dfPractice2<-data.frame(cbind(Candidate_Name,ABC_poll,CBS_poll))
+
+#the column names can be changed if the variable names are not that descriptive
+#below is what the data.frame using cbind would look like 
+#adding column names
+colnames(dfPractice2)<-c("Candidate Name","      ABC poll results","     CBS poll results")
+print(dfPractice2)
+
+
+#what data.frame looks like using rbind
+print(dfPractice)
+
+#What data.frame looks like using cbind
+print(dfPractice2)
