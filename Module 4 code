@@ -1,0 +1,122 @@
+#Module 4 assignment
+
+#data
+library(dplyr)
+
+data<-data.frame(c(0.6,	103,	"bad",	"low",	"low",
+                   0.3,	87,	"bad",	"low",	"high",
+                   0.4,	32,	"bad",	"high",	"low",
+                   0.4,	42,	"bad",	"high",	"high",
+                   0.2,	59,	"good",	"low",	"low",
+                   0.6,	109,	"good",	"low",	"high",
+                   0.3,	78,	"good",	"high",	"low",
+                   0.4,	205,	"good",	"high",	"high",
+                   0.9,	135,	"NA",	"high",	"high",
+                   0.2,	176,	"bad",	"high",	"high"))
+
+#added a column name to make it shorter than the default
+colnames(data)<-(c("Names"))
+
+#set freq=1 to start
+freq=1
+
+#there are 10 medical records, so each r is a medical record
+#There are 5 variable that are all in a row, so 
+#each variable will be read in one at a time
+
+for (r in 1:10){
+  
+  
+  data$Frequencies[r]<-data$Names[freq]
+ # Freq<-(as.numeric(data$Frequencies[1:10]))
+ # colnames(Freq)<-c("Frequency")
+  freq<-freq+1
+  
+  data$BP[r]<-data$Names[freq]
+ # BP<_(as.numeric(data$BP[1:10]))
+ # colnames(BP)<-c("Blood Pressure")
+  freq<-freq+1
+  
+  
+  #the data for first, second and third
+  # are characters (words) and the output
+  #required are numbers. The if/else
+  #statements read in what the word is
+  #and changes it to a 0 or 1
+  #depending on the criteria.
+  #The instructions state to set
+  #'good' to 0 and 'bad' to 1 for the variable
+  #First
+  
+if(data$Names[freq]=="bad"){
+  data$First[r]<-c(1)
+}else if (data$Names[freq]=="good"){
+    data$First[r]<-c(0)
+  } else data$First[r]<-c("NA")
+ # First<-as.numeric(data$First[1:10])
+#  colnames(First)<-c("First Assessment")
+  
+  
+  freq<-freq+1
+  
+if(data$Names[freq]=="low"){
+  data$Second[r]<-c(0)
+}else if (data$Name[freq]=="high"){
+  data$Second[r]<-c(1)
+}
+  
+ #data$Second[r]<-data$Names[freq]
+ # Second<-as.numeric(data$Second[1:10])
+#  colnames(Second)<-c("Second Assessment")
+  freq<-freq+1
+  
+  if(data$Names[freq]=="low"){
+    data$FinalDecision[r]<-c(0)
+  }else if (data$Name[freq]=="high"){
+    data$FinalDecision[r]<-c(1)
+  }
+  
+  #data$FinalDecision[r]<-data$Names[freq]
+ # FinalDecision<-as.numeric(data$FinalDecision[1:10])
+#  colnames(FinalDecision)<-c("Final Decision")
+  freq<-freq+1
+  
+}
+
+FinalData<-cbind.data.frame(data$Frequencies[1:10],data$BP[1:10],data$First[1:10],
+                      data$Second[1:10],data$FinalDecision[1:10])
+
+is.na(FinalData)<-FinalData=="NA"
+colnames(FinalData)<-c("Freq","BP","First","Second","Final Decision")
+
+
+FinalData$Freq<-as.numeric(FinalData$Freq)
+FinalData$BP<-as.numeric(FinalData$BP)
+FinalData$First<-as.numeric(FinalData$First)
+FinalData$Second<-as.numeric(FinalData$Second)
+FinalData$`Final Decision`<- as.numeric(FinalData$`Final Decision`)
+
+
+
+
+par(mfrow=c(2,2))
+
+hist(FinalData$First, main="First Assessment",xlab="Value with 0=good and 1=bad",ylab="Frequency",labels=TRUE,ylim=c(0,8))
+hist(FinalData$Second,main="Second Assessment",xlab="Value with 0=low and 1=high",ylab="Frequency",labels=TRUE,ylim=c(0,8))
+hist(FinalData$`Final Decision`,main="Final Decision", xlab="Value with 0=low and 1=high",ylab="Frequency",labels=TRUE,ylim=c(0,8))
+
+
+#boxplot(FinalData$Freq,main="Visit frequency",horizontal=TRUE)
+#text(x=fivenum(FinalData$Freq),labels=fivenum(FinalData$Freq),y=1.25)
+boxplot(FinalData$BP,main="Blood Pressure",horizontal=TRUE)
+text(x=fivenum(FinalData$BP),labels=fivenum(FinalData$BP),y=1.45)
+
+
+par(mfrow=c(2,2))
+
+boxplot(FinalData$BP~FinalData$First,main="First assessment",xlab="0=good 1=bad",ylab="Blood Pressure",horizontal=TRUE)
+#text(x=fivenum(FinalData$BP),labels=fivenum(FinalData$BP),y=1.25)
+boxplot(FinalData$BP~FinalData$Second,main="Second assessment",xlab="0=low 1=high",ylab="Blood Pressure",horizontal=TRUE)
+#text(x=fivenum(FinalData$BP),labels=fivenum(FinalData$BP),y=1.25)
+boxplot(FinalData$BP~FinalData$`Final Decision`,main="Final Decision",xlab="0=low 1=high",ylab="Blood Pressure",horizontal=TRUE)
+#text(x=fivenum(FinalData$BP),labels=fivenum(FinalData$BP),y=1.25)
