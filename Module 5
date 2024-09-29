@@ -1,0 +1,87 @@
+Your Assignment:
+Find the value of inverse of a matrix, determinant of a matrix by using the following values:
+A=matrix(1:100, nrow=10)
+B=matrix(1:1000, nrow=10)
+Post your result and procedure you took on your blog.
+A good start will be:
+>A <- matrix(1:100, nrow=10)  
+>B <- matrix(1:1000, nrow=10)
+
+#create Matrix A
+A<-matrix(1:100,nrow=10)
+#matlib package is requried for some of the commands
+library(matlib)
+#Find the adjoint matrix 
+F<-adjoint(A)
+F
+#calculate the determinant for matrix A
+G<-det(A)
+G
+#the inverse of matrix A is the adjoint matrix 
+#divided by the determinant
+F/G
+#code to find the inverse of a matrix
+solve(A)
+
+#Code to find the adjoint of matrix A
+
+#### NOTE ######
+# it takes a long time for R to compute the adjoint of matrix A
+
+
+library(matlib)
+
+#create matrix
+A<-matrix(1:100,nrow=10)
+
+#create transpose of matrix A
+At<-t(A)
+At
+a<-c(1:100)
+i=0
+
+library(matlib)
+a<-data.frame(1)
+i=0
+for (r in 1:10){#row loop
+  for (c in 1:10){#column loop
+    i=i+1
+    a[i]<-minor(At,r,c)
+    if(i%%2==0){
+      a[i]=a[i]*-1 #this adjusts for the required sign changes
+      
+    }#end of if statement
+    
+  }#end of column loop 
+}#end of row loop
+
+
+##### matrix B is not a square (nxn) matrix so
+###### the determinant and inverse cannot be calculated
+AdjA<-matrix(a[1:100],nrow=10)  #take data.frame and make a matrix named AdjA
+AdjA #print adjoint(A)
+
+## Below is code to create a 10x10 matrix with random integers 
+
+#create random string of 100 integers
+RandomIntegr<-sample.int(n=100)
+
+#take the string and make a matrix that is 10X10
+ARI<-matrix(RandomIntegr[1:100],nrow=10)
+ARI
+
+#calculate the determinant of matrix ARI
+det(ARI)
+
+#calculate the adjoint of matrix ARI
+adjoint(ARI)
+
+#calculate the inverse of matrix ARI using (1/determinant matrix ARI) * (adjoint ARI)
+(1/det(ARI))*adjoint(ARI)
+
+#calculate the inverse matrix of ARI
+solve(ARI)
+
+
+
+
