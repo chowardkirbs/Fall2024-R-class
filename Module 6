@@ -1,0 +1,116 @@
+## question 1-2  ###
+
+## initial values   #####
+
+#type in values for the different matrices    
+# matrix A values
+a<-c(2,0,1,3)
+#nra is the number of columns for matrix A
+ncA<-c(2)
+
+#matrix B values
+b<-c(5,2,4,-1)
+#nrB is the number of columns for matrix B
+ncB<-c(2)
+
+#values for the diag on matrix C
+c<-c(4,1,2,3)
+#nrC is the number of columns for matrix C
+ncC<-c(4)
+###########################
+
+##    function HW6    #############
+
+#make function so that the the values in the matrices can change without 
+#starting over every time
+HW6<-function(a,ncA,b,ncB,c,ncC){
+A<-matrix(a,ncol=ncA)
+A
+B<-matrix(b,ncol=ncB)
+B
+C<-matrix(diag(c),ncol=ncC)
+C
+add<-A+B
+print("A+B is")
+print(add)
+subt<-A-B
+print("A-B is")
+print(subt)
+
+C<-matrix(diag(c),ncol=ncC)
+print("Matrix C with diag")
+print(C)
+}
+
+#run this command to engage the function HW6 with the
+#values of the three matrices. 
+HW6(a,ncA,b,ncB,c,ncC)
+
+## different values #############
+
+#below the size of Matrix A and B were changed
+#from a 2x2 to 3x3 and the values were changed
+#and the function HW6 still works. 
+
+#type in values for the different matrices    
+# matrix A values
+a<-c(1,1,1,1,1,1,1,1,1)
+#nra is the number of columns for matrix A
+ncA<-c(3)
+
+#matrix B values
+b<-c(1:9)
+#nrB is the number of columns for matrix B
+ncB<-c(3)
+
+#values for the diag on matrix C
+c<-c(5,4,3,2)
+#nrC is the number of columns for matrix C
+ncC<-c(4)
+
+HW6(a,ncA,b,ncB,c,ncC)
+#################################
+
+#question 3
+
+#there are a few ways to build a matrix
+#one way is to type it out like we did in question 1-2
+
+Q3<-matrix(c(3,2,2,2,2,1,3,0,0,0,1,0,3,0,0,1,0,0,3,0,1,0,0,0,3),nrow=5)
+Q3
+
+# this works but typing out larger or more complex matrices
+# can be messy. I had to type it twice becaue I lost count of 
+# all the 0's
+
+## there seems to be a pattern with this particular Matrix
+# that we can use and build a for loop and then use
+# diag to add the 3's
+
+#identiy number of columns
+nc3<-c(5)
+
+## make a matrix with all 0's
+M3<-matrix(0,nrow=nc3,ncol=nc3)
+
+# c is the column index
+# r is the row index
+for (c in 1:nc3){
+  for (r in 1:nc3)
+  {
+    if(c==1){
+      M3[r,c]=2
+    } # end of column = 1 if statement
+    if(r==1){
+      M3[r,c]=1
+    }# end of row = 1 if statement
+    
+    }# end of row (r) loop 
+
+    
+  }#end of column (c) loop 
+
+# set the diagonal to all 3's
+#but keep all of the other values
+diag(M3)<-3  
+M3
