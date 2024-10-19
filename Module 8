@@ -1,0 +1,57 @@
+##  Module 8 ##
+
+
+##  read in data ##
+library(readr)
+Assignment_6_Dataset <- read_csv("C:/Users/cahk/Downloads/Assignment 6 Dataset.txt")
+View(Assignment_6_Dataset)
+
+## package needed for assignment
+library(plyr)
+
+## add column named Grade.Ave that contains the grade average for the gender of the student
+Assignment_6_Datasetv2<-ddply(Assignment_6_Dataset,"Sex",transform,Grade.Ave=mean(Grade))
+
+## Save new dataset. 
+write.csv(Assignment_6_Datasetv2,"file path.csv")
+
+## filter out all of the names that do not have i/I
+Assignment_6_Datasetv3<-subset(Assignment_6_Dataset,grepl("[iI]",Assignment_6_Dataset$Name))
+
+
+## save new dataset with filtered out students whose name does not have i/I
+write.csv(Assignment_6_Datasetv3,"file path.csv")
+
+
+table(Assignment_6_Dataset$Sex)
+
+tapply(Assignment_6_Dataset$Grade,Assignment_6_Dataset$Sex,mean)
+tapply(Assignment_6_Dataset$Grade,Assignment_6_Dataset$Sex,summary)
+
+
+
+
+paste(LETTERS)
+
+
+#nchar()-size of each element
+#nzchar()-tests whether elements of a character vector are non-empty string
+#sprinf()
+i=8
+s=sprintf("the square of %d is %d",i,i^2)
+s
+
+#Strsplit()-split into values for data/time
+
+## plyr package ##
+#allow to split data, run function, then combine data again ##
+# equal ++
+# not equal !=
+# greater/less than ><
+# greater/less than or equal to >= <=
+# and &
+# or |
+# not !
+
+#dlply() data.frame
+#adply() array data frame
