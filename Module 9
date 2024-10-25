@@ -1,0 +1,60 @@
+library(readr)
+
+Affairs <- read_csv("C:/Users/My Files/OneDrive - My School/Falll 2024/R class/R code for assignments/Affairs.csv")
+
+
+#### plot without any packages/library ###
+#
+#
+plot(Affairs$occupation)
+OccTable<-table(Affairs$occupation)
+OccTable
+plot(OccTable,
+     main="Graph of Occuation Frequencies",
+     xlab="Occupation",
+     ylab="Frequency")
+
+barplot(OccTable,
+     main="Graph of Occuation Frequencies",
+     xlab="Occupation",
+     ylab="Frequency")
+
+OccGender<-table(Affairs$gender,Affairs$occupation)
+OccGender
+
+
+barplot(OccGender,
+        main="Frequency of Female/Male in each Occupation",
+        xlab="Occupation",
+        ylab="Frequency",
+        col=c("pink","black"))
+legend("topleft",
+       c("Female","Male"),
+       fill=c("pink","black"))
+
+
+#### plot using Lattice package ###
+#
+#
+library(lattice)
+
+
+histogram(~yearsmarried|gender,data=Affairs,
+          main="Number of Years Married by Gender",
+          xlab="Number of Years Married")
+
+### ggplot2 ###
+#
+#
+library(ggplot2)
+
+ggplot(Affairs,
+       aes(Affairs$occupation,Affairs$rating,colour=gender))+
+  geom_point()
+
+ggplot(Affairs)+
+       aes(occupation)+
+  ggtitle("Occupation and Gender")+
+  xlab("Occupation")+
+  ylab("Frequency")+
+  geom_bar(aes(fill=gender))
