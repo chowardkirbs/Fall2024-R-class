@@ -1,1 +1,13 @@
 ## R Package ##
+
+Package: zzcahkzz
+Type: Package
+Title: Create Package Practice 
+Version: 0.1.0
+Author: Courtney Howard
+Maintainer:chowardk@usf.edu
+Description: Package Creating Practice
+License: General Public License. CCO. 
+URL: https://github.com/chowardkirbs/Fall2024-R-class/blob/main/zzcahkzz
+Encoding: UTF-8
+LazyData: true
