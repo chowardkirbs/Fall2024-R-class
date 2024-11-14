@@ -1,0 +1,319 @@
+---
+title: "R Markdown for Class"
+author: "Courtney Howard Kirby"
+date: "2024-11-10"
+output: html_document
+---
+# Check for Label Switching Two Class Bifactor Model with one General Factor and Two Specific Factors with Mplus output
+
+Identifying label switching in Latent Class Analysis can be challenging. Here is code on how to look at the relationship between the simulated latent class loadings and the results of the simulation. 
+
+Monte Carlo simulations were completed using Mplus with the aid of the R package MplusAutomation. The  number of repetitions was set to 500 for sample sizes 500,1000,2000,3500, and 5000. 
+
+R was also used to automate Mplus to analyze the data and then to extract the data from the .out Mplus files. This code demonstrates the extraction portion of the process to check for the possibility of label switching. 
+
+Below are the loadings used for Scenario  4 simulation. Notice that the the specific factors for CLASS 1 are higher than the specific factors for CLASS 2. The loadings for the general factor in CLASS 1 is lower than the loadings in general factor CLASS 2. 
+
+This project checked if the loadings for CLASS 1 specific factors are higher or lower than the CLASS 2 specific factors. The absolute value was used. 
+
+
+CLASS 1 simulated loadings
+
+|General| specific 1  |	specific 2 |
+|:------|:------------|:-----------|
+| 0.5 	|         0.5	|   0.5      |
+| 0.6	  |        0.4  |   	0.4    |
+| 0.4	  |         0.6	|    0.6     |
+| 0.5	  |        0.5	| 0.5        |
+| 0.5   |		
+| 0.6 	|	
+| 0.4	  |	
+| 0.5	  |	
+
+
+CLASS 2 simulated loadings 
+
+general | specific 1  |	specific 2
+:-------|:------------|:-----------
+  0.8  |        0	    |    0
+  0.7  |        0   	|    0
+  0.6  |         0	  |    0
+  0.7  |        0	    |   0
+  0.8  |		
+  0.7	 |
+  0.6  |	
+  0.7  |		
+
+
+
+The first part of this project is to explain why some of the steps were completed. The final section is the code run in its entirety. 
+
+The package MplusAutomation is required.
+
+Read in the first .out file.
+
+```{r}
+library(MplusAutomation)
+
+   c1<-readModels(
+        "C:FILE PATH",recursive=TRUE)
+c1
+
+b<-c(1:500)
+
+
+```
+
+Extract the parameters from the .out file.
+
+
+```{r}
+
+parameters<-c1$parameters$unstandardized
+
+head(parameters)
+```
+
+I found it easier for me to understand the loading by reshaping the data. I created four columns, one column for each type of loading. 
+
+```{r}
+eh1<-data.frame(parameters$param[1:8],parameters$est[1:8],parameters$est[9:16],
+                      parameters$est[42:49],parameters$est[50:57])
+      colnames(eh1)<-c("Item","estG1","estS1","estG2","estS2")
+      
+      eh1
+      
+     
+```
+There were some nreps that had missing data which created a slight issue with the variables getting turned into characters. I had to flip the variables back to numeric using as.numeric as seen below. 
+
+```{r}
+   
+        eh1$estG1n<-as.numeric((as.character(eh1$estG1)))
+        eh1$estG2n<-as.numeric((as.character(eh1$estG2)))
+        eh1$estS1n<-as.numeric((as.character(eh1$estS1)))
+        eh1$estS2n<-as.numeric((as.character(eh1$estS2)))
+        eh1<-eh1[,c(1,6,7,8,9)]
+        
+      eh1
+```
+
+I wanted to see how many of the loadings followed the pattern that we tried to create with the simulation. I looked at the relationship between classes for the two specific factors and the general factor. The code below is creating a new variable "Count" that will identify if the estimated loading for specific factors labeled class 1 is higher or lower than the estimated loading for specific factor labeled class 2. 
+
+```{r}
+ eh1$count=
+        ifelse(abs(eh1$estS1n)>(abs(eh1$estS2n)),"Class 1 high","Class 1 low")
+      
+      eh1
+      
+      eh11tableS<-data.frame(table(eh1$count))
+      eh11tableS
+```
+
+Here is the code for the General factor comparison
+
+```{r}
+
+
+ eh1$count2=
+            ifelse(abs(eh1$estG1n)>(abs(eh1$estG2n)),"Gen Class 1 high","Gen Class 1 low")
+          
+           eh11tableG<-data.frame(table(eh1$count2))
+           
+           eh11tableG
+```
+
+To decide if label switching occurred or not, the number of times that Class 1 was higher than Class 2 in the simulated data was counted. If there were between 5-8 times that class 1 was larger than the absolute value of class 2, I labeled with with "S1 higher more than S2". The scenario we are using has the specific factors class 1 higher than the specific factors class 2, so "S1 more than S2" indicates that label switching did not occur for that particular nrep.
+
+The General Factor for the simulated scenario has lower Class 1 loadings than Class 2, so we should be looking at the "G1 higer less than G2" count. 
+
+
+
+```{r}
+
+fakename<-data.frame(0,0)
+colnames(fakename)<-c("ClassSelection","ClassSelectionGen")
+
+if(eh11tableS$Freq[1]>4){
+            fakename$ClassSelection[1]<-c("S1 higher >4 times S2")
+          }else{
+            fakename$ClassSelection[1]<-c("S1 higher <=4 S2")}
+          
+          
+          if(eh11tableG$Freq[1]<4){
+            fakename$ClassSelectionGen[1]<-c("G1 higher <=4 G2")
+          }else{
+            fakename$ClassSelectionGen[1]<-c("G1 higher >4 G2")}
+
+print(fakename)
+
+
+
+
+
+```
+
+Now it is time to run the code in its entirety with all five sample sizes, with 500 reps each. 
+
+```{r}
+library(MplusAutomation)
+
+b<-c(1:500)
+SampleSize<-c(500,1000,2000,3500,5000)
+
+## use for testing ##
+#SampleSize<-c(500)
+
+   
+
+
+## start of Sample Size loop ##
+for (j in 1:length(SampleSize)){
+   
+      a<-paste0("C:/Users/cahk/Box/Mplus simulation/Scenario 4/4n",SampleSize[j])
+      
+       c<-paste0(a,"/prac_",b[1],".out")
+        
+        c1<-readModels(
+          c,recursive=TRUE)
+
+        
+        eh1a<-data.frame(b[1])
+        colnames(eh1a)<-c("nreps")
+    
+ parameters<-c1$parameters$unstandardized
+  parameters1<-as.numeric(parameters$est)
+          
+  eh1<-data.frame(parameters$param[1:8],parameters$est[1:8],parameters$est[9:16],
+                          parameters$est[42:49],parameters$est[50:57])
+          
+ colnames(eh1)<-c("Item","estG1","estS1","estG2","estS2")
+          
+      ## imported as character so had to switch it to numeric ##     
+        eh1$estG2n<-as.numeric((as.character(eh1$estG2)))
+        eh1$estG1n<-as.numeric((as.character(eh1$estG1)))
+        eh1$estS1n<-as.numeric((as.character(eh1$estS1)))
+        eh1$estS2n<-as.numeric((as.character(eh1$estS2)))
+        eh1<-eh1[,c(1,6,7,8,9)]
+        
+             eh1$count1=
+            ifelse(abs(eh1$estS1n)>(abs(eh1$estS2n)),"Class 1 high","Class 1 low")
+          
+           eh1$count2=
+            ifelse(abs(eh1$estG1n)>(abs(eh1$estG2n)),"Gen Class 1 high","Gen Class 1 low")
+          
+          eh11tableS<-data.frame(table(eh1$count1))
+          
+           eh11tableG<-data.frame(table(eh1$count2))
+          
+          if(eh11tableS$Freq[1]>4){
+            eh1a$ClassSelection<-c("S1 higher >4 times S2")
+          }else{
+            eh1a$ClassSelection<-c("S1 higher <=4 S2")}
+          
+          
+          if(eh11tableG$Freq[1]<4){
+            eh1a$ClassSelectionGen<-c("G1 higher <=4 G2")
+          }else{
+            eh1a$ClassSelectionGen<-c("G1 higher >4 times G2")}
+        
+              ## start label switching check ##
+          
+         
+        
+  ## start of i loop for class 2 ##            
+                 for (i in 2:500){
+    
+        c<-paste0(a,"/prac_",b[i],".out")
+        
+        c1<-readModels(
+          c,recursive=TRUE)
+        
+        eh1a1<-data.frame(b[i])
+        colnames(eh1a1)<-c("nreps")
+          
+        ###### ## start label switching check ##
+          parameters<-c1$parameters$unstandardized
+          parameters1<-as.numeric(parameters$est)
+          
+   eh1<-data.frame(parameters$param[1:8],parameters$est[1:8],parameters$est[9:16],
+                          parameters$est[42:49],parameters$est[50:57])
+          
+          colnames(eh1)<-c("Item","estG1","estS1","estG2","estS2")
+          
+      ## imported as character so had to switch it to numeric ##     
+        eh1$estG2n<-as.numeric((as.character(eh1$estG2)))
+        eh1$estG1n<-as.numeric((as.character(eh1$estG1)))
+        eh1$estS1n<-as.numeric((as.character(eh1$estS1)))
+        eh1$estS2n<-as.numeric((as.character(eh1$estS2)))
+        eh1<-eh1[,c(1,6,7,8,9)]
+        
+             eh1$count1=
+            ifelse(abs(eh1$estS1n)>(abs(eh1$estS2n)),"Class 1 high","Class 1 low")
+          
+           eh1$count2=
+            ifelse(abs(eh1$estG1n)>(abs(eh1$estG2n)),"Gen Class 1 high","Gen Class 1 low")
+          
+          eh11tableS<-data.frame(table(eh1$count1))
+          
+           eh11tableG<-data.frame(table(eh1$count2))
+          
+          if(eh11tableS$Freq[1]>4){
+            eh1a1$ClassSelection<-c("S1 higher >4 times S2")
+          }else{
+            eh1a1$ClassSelection<-c("S1 higher <=4 S2")}
+          
+          
+          if(eh11tableG$Freq[1]<4){
+            eh1a1$ClassSelectionGen<-c("G1 higher <=4 G2")
+          }else{
+            eh1a1$ClassSelectionGen<-c("G1 higher >4 times G2")}
+           
+           eh1a<-rbind(eh1a,eh1a1)
+           
+      } ## end of i loop to bring in the other 499 reps
+      
+      name1<-paste0("outtable",SampleSize[j])
+      name2<-paste0("outtableGen",SampleSize[j])
+      name3<-paste0("outtableBoth",SampleSize[j])
+      
+      
+      name1<-table(eh1a$ClassSelection)
+       
+      name2<-table(eh1a$ClassSelectionGen)
+         
+      name3<-table(eh1a$ClassSelection,eh1a$ClassSelectionGen)
+      
+      z<-paste0("The Sample Size is ",SampleSize[j])
+      print(z)
+      
+      y<-c("Specific Factors")
+      print(y)
+      
+      print(name1)
+      
+      y1<-c("General Factors")
+      print(y1)
+      print(name2)
+      
+      y2<-c("Contingency Table for Specific Factors and General Factors")
+      
+      print(y2)
+    
+      
+      print(name3)
+     
+     
+      
+      
+} ## End of j loop for Sample Size
+  
+  
+
+
+
+
+
+```
+
+
